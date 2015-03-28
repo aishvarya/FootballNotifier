@@ -30,7 +30,7 @@ function notificationPopups(url){
         return;
     }
     running[url] = 1;
-    console.log(url);
+    //console.log(url);
 //    url = 'http://www.scorespro.com/soccer/livescore/welling-vs-grimsby/28-03-2015/';
     $.get(url, function(txt) {
         // console.log("Retrieved Page");
@@ -47,11 +47,31 @@ function notificationPopups(url){
 	gameover = 0;
 	matchtit = htmlDoc.getElementsByTagName('title')[0].innerHTML;
 	//console.log(matchtit);
+	tmpsc = "";
 	for (var i = 0; i < tds.length; i++) { 
+		brflag = 0;
+		if (tds[i].className == "home") {
+			scores = tds[i].innerHTML;
+			tmpsc = scores;
+			//console.log(tmpsc);
+		}
 		if (tds[i].className == "score") {
 			scores = tds[i].innerHTML;
-			curscr = scores.length;
-			latests = scores
+			pros = scores
+			for (var j=0;j<pros.length;j++) {
+				if (pros[j]=='-') {
+					brflag = 1;
+					break;
+				}
+			}
+			console.log(pros);
+			if (brflag == 1) {
+				latests = scores;
+				curscr = scores.length;
+			}
+		}
+		if (brflag == 1) {
+			scorer = tmpsc;
 		}
 		/*
 		if (tds[i].className == "league") {
@@ -75,11 +95,9 @@ function notificationPopups(url){
 			// console.log(scores);
 		}
 		*/
-		if (tds[i].className == "home") {
-			scores = tds[i].innerHTML;
-			scorer = scores;
-		}
-		if (tds[i].className == "away") {
+		
+		if (tds[i].className == "away" && brflag == 0) {
+			console.log("here");
 			scores = tds[i].innerHTML;
 			scorer2 = scores;
 		}
@@ -107,9 +125,14 @@ function notificationPopups(url){
 	    flag2 = 0;
 	    flag3 = 0;
 	    var player = "";
+	    swape = 0;
 	    for (var i = 0; i < scorer.length; i++) {
 		    if (flag3 == 1) {
 			    player = player + scorer[i];
+			  //  console.log(player);
+			    if (!isNaN(parseInt(scorer[i]))) {
+				    swape = 1;
+			    }
 		    }
 		    if (scorer[i] == '<') {
 			    flag1 = 1;
@@ -124,20 +147,26 @@ function notificationPopups(url){
 			    flag3=1;
 		    }
 	    }
+	    if (swape == 1) {
+		    // swap time and player
+		    var tmpp = time;
+		    time = player;
+		    player = tmpp;
+	    }
 	    //	console.log(player);
 	    //	console.log(time);
 	    // cleanup player
 	    flag1 = 0;
 	    var anotp = "";
-	    for (var i = 0; i < player; i++) {
+	    for (var i = 0; i < player.length; i++) {
 		    if (player[i] == '<') {
-			    flag++;
+			    flag1++;
 		    }
-		    if (flag == 0) {
+		    if (flag1 == 0) {
 			    anotp = anotp + player[i];
 		    }
 		    if (player[i] == '>') {
-			    flag--;
+			    flag1--;
 		    }
 	    }
 	    player = anotp;
@@ -146,7 +175,7 @@ function notificationPopups(url){
 	    if (localStorage.getItem("prevscore-"+url) == null) {
 		    localStorage.setItem("prevscore-"+url, curscr, url);
 		    if (curscr != 0) {
-			    var msg = "GOAAALLL!" + player + " score at " + time + "!! Live Score: " + latests;
+			    var msg = "GOAAALLL!" + player + " score " + time + "!! Live Score: " + latests;
 			    //		    console.log(msg);
 			    notify(matchtit, msg, url);
 		    }
