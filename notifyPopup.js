@@ -183,7 +183,7 @@ function notificationPopups(url){
 	    if (localStorage.getItem("prevscore-"+url) < curscr) {
 		    localStorage.removeItem("prevscore-"+url);
 		    localStorage.setItem("prevscore-"+url, curscr, url);
-		    var msg = "GOAAALLL!" + player + " score at " + time + "!! Live Score: " + latests;
+		    var msg = "GOAAALLL! " + player + " score at " + time + "!! Live Score: " + latests;
 //		    console.log(msg);
 		    notify(matchtit, msg, url);
 	    }
