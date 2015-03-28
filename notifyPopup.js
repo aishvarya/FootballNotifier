@@ -3,26 +3,27 @@ function audioNotification(){
     yourSound.play();
 }
 function notify(title, msg, url) {
-    chrome.notifications.create(
-            url,
-            {   
-                'type': 'basic',
-                'iconUrl' : 'http://4.bp.blogspot.com/-7MZ6c0_tVpI/TomENvjGD4I/AAAAAAAAAGo/iZjcX2pg9fg/s45/test-cricket-ball.jpg',
-                'title' : title,
-                'message' : msg
-            },
-            function(notifid){
-      //          console.log("Last error:", chrome.runtime.lastError); 
-            }
-    );
-    chrome.notifications.onClicked.addListener(function(notifid) {
-	    window.open(url);
-	    chrome.notifications.clear(notifid, function(cleared){});
-    });
-    setTimeout(function(){
-        chrome.notifications.clear(url, function(cleared){});
-    }, 3000);
+	var notif = chrome.notifications.create(
+		url,
+		{   
+			'type': 'basic',
+	    		'iconUrl' : 'football_popup.jpg',
+	    		'title' : title,
+	    		'message' : msg
+		},
+		function(notifid){
+			console.log("Last error:", chrome.runtime.lastError); 
+		}
+	);
+	chrome.notifications.onClicked.addListener(function(notifid) {
+		window.open(url);//.replace("json", "html"), "_blank");
+		chrome.notifications.clear(notifid, function(cleared){});
+	});
+	setTimeout(function(){
+		chrome.notifications.clear(url, function(cleared){});
+	}, 10000);
 } 
+	    //'http://static1.squarespace.com/static/5163feb6e4b0928e3b20b3b1/54098b1ee4b0b1838682a701/54098b31e4b035477df28fba/1409911895462/football-fiesta-salisbury.jpg',
 running = {}
 function notificationPopups(url){
     if (url in running) {
@@ -103,7 +104,7 @@ function notificationPopups(url){
 	if (localStorage.getItem("prevscore-"+url) == null || localStorage.getItem("prevscore-"+url) < curscr) {
 		localStorage.removeItem("prevscore-"+url);
 		localStorage.setItem("prevscore-"+url, curscr, url);
-		var msg = "GOAAALLL!" + player + " scores at " + time + "!! Current Score: " + latests;
+		var msg = "GOAAALLL!" + player + " scores at " + time + "!! Live Score: " + latests;
 		console.log(msg);
                 notify(matchtit, msg, url);
 	}
