@@ -3,7 +3,7 @@ function audioNotification(){
     yourSound.play();
 }
 function notify(title, msg, url) {
-    var notif = chrome.notifications.create(
+    chrome.notifications.create(
             url,
             {   
                 'type': 'basic',
@@ -12,60 +12,103 @@ function notify(title, msg, url) {
                 'message' : msg
             },
             function(notifid){
-                // console.log("Last error:", chrome.runtime.lastError); 
+      //          console.log("Last error:", chrome.runtime.lastError); 
             }
     );
     chrome.notifications.onClicked.addListener(function(notifid) {
-        window.open(url.replace("json", "html"), "_blank");
-        chrome.notifications.clear(notifid, function(cleared){});
+	    window.open(url);
+	    chrome.notifications.clear(notifid, function(cleared){});
     });
     setTimeout(function(){
         chrome.notifications.clear(url, function(cleared){});
-    }, 10000);
+    }, 3000);
 } 
 running = {}
 function notificationPopups(url){
     if (url in running) {
         return;
     }
-    // console.log(url);
     running[url] = 1;
+    url = 'http://www.scorespro.com/soccer/livescore/fcm-dorohoi-vs-fc-balotesti/28-03-2015/';
     $.get(url, function(txt) {
         // console.log("Retrieved Page");
         count=0;
         titlematch = txt.match.team1_name + ' vs. ' + txt.match.team2_name + ', ' + txt.match.town_name;
-        var regex = /(<([^>]+)>)/ig;
-        // console.log(txt.comms);
-        results = txt.comms[0].ball;
-        madeNoise = 0;
-        for (i = 0; i < results.length; i++) {
-            cur = results[i];
-            over = cur.overs_actual;
-            // console.log(over);
-            players = cur.players;
-            // console.log(bowler);
-            det = cur.event;
-            console.log(det);
-            commentary = cur.text;
-            commentary = commentary.replace(regex, "");
-            if (commentary!=null && commentary != undefined  && (det[0] >= 4 || det.match(/[A-Z]/))) { // check for commentary = (\s\S)
-                //console.log(localStorage.getItem("lastNotification-"+url));
-                //console.log(over);
-                if(localStorage.getItem("lastNotification-" + url) < over || (localStorage.getItem("lastNotification-" + url) == over && localStorage.getItem("lastComment-" + url) != commentary)) {
-                    notify(titlematch, "Over : "+over+", "+players+" - " + det +" "+commentary, url);
-                    if (madeNoise == 0) {
-                        audioNotification();
-                        madeNoise = 1;
-                    }
-                    localStorage.removeItem("lastNotification-" + url);
-                    localStorage.setItem("lastNotification-" + url, over);
-                    localStorage.setItem("lastComment-" + url, commentary);
-                    break;
-                }
-                //console.log("Over:"+over+"  "+det+" "+bowler+" "+commentary);
-            }
-            delete running[url];
-        }
+	parser=new DOMParser();
+	htmlDoc=parser.parseFromString(txt, "text/html");
+	tds=htmlDoc.getElementsByTagName('td');
+	curscr = 0;
+	var matchtit = "Match";
+	var latests = "0 - 0";
+	var scorer = "";
+	for (var i = 0; i < tds.length; i++) { 
+		if (tds[i].className == "score") {
+			scores = tds[i].innerHTML;
+			curscr = scores.length;
+			latests = scores
+		}
+		if (tds[i].className == "league") {
+			scores = tds[i].innerHTML;
+			// parse score
+			var curn = "";
+	    		flag = 0;
+    			flag2 = 0;
+			for (var j = 0; j < scores.length; j++) {
+				if (flag2 == 1) {
+					curn = curn + scores[j];
+				}
+				if (scores[j] == '/') {
+					flag = 1;
+				}
+				if (flag == 1 && scores[j]=='>') {
+					flag2 = 1;
+				}
+			}
+			matchtit = curn
+			// console.log(scores);
+		}
+		if (tds[i].className == "home") {
+			scores = tds[i].innerHTML;
+			scorer = scores;
+		}
+	}
+	console.log(matchtit);
+//	console.log(latests);
+//	console.log(scorer);
+	var time = "";
+	flag1 = 0;
+	flag2 = 0;
+	flag3 = 0;
+	var player = "";
+	for (var i = 0; i < scorer.length; i++) {
+		if (flag3 == 1) {
+			player = player + scorer[i];
+		}
+		if (scorer[i] == '<') {
+			flag1 = 1;
+		}
+		if (flag1 == 0) {
+			time = time + scorer[i];
+		}
+		if (scorer[i] == '/') {
+			flag2=1;
+		}
+		if (flag2==1 && scorer[i]=='>') {
+			flag3=1;
+		}
+	}
+//	console.log(player);
+//	console.log(time);
+	localStorage.setItem("prevscore-"+url,0);
+	if (localStorage.getItem("prevscore-"+url) == null || localStorage.getItem("prevscore-"+url) < curscr) {
+		localStorage.removeItem("prevscore-"+url);
+		localStorage.setItem("prevscore-"+url, curscr, url);
+		var msg = "GOAAALLL!" + player + " scores at " + time + "!! Current Score: " + latests;
+		console.log(msg);
+                notify(matchtit, msg, url);
+	}
+	console.log(localStorage.getItem("prevscore-"+url));
+	delete running[url];
     });
 }
 
