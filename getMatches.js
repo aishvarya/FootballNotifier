@@ -5,10 +5,10 @@ function fixurl (origUrl) {
     return theUrl;
 }
 function setStatusAndTitle(origUrl, ele){
-    console.log("trying to retrieve " + origUrl);
+    //console.log("trying to retrieve " + origUrl);
     $.get(origUrl, function(response) {
-     console.log("retrieved " + origUrl);
-     console.log(response);
+     //console.log("retrieved " + origUrl);
+    // console.log(response);
         ele.innerHTML = response.live.status;
     });
 };
@@ -75,7 +75,7 @@ function getMatches(){
                         //concated +="<a href=\"" + matchList[i].children[1].textContent + "\">" + "blastatus"  + "</a>";
                     }
 
-                    console.log(concated);
+                    //console.log(concated);
                     document.getElementById('accordion').innerHTML= concated;
                     $('#accordion input[type="checkbox"]').click(function(e) {
                         e.stopPropagation();
@@ -90,7 +90,7 @@ function getMatches(){
                                 desc = $(ui.newHeader[0]).attr("id");
                                 currentStatus = document.getElementById("status-" + val);
                                 if(currentStatus != null){
-                                    console.log(currentStatus.innerHTML);
+                                    //console.log(currentStatus.innerHTML);
                                     if($(currentStatus).attr("stillLoading") == "1"){
                                         currentStatus.innerHTML = desc;
                                         $(currentStatus).attr("stillLoading",  "0");

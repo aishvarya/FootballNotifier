@@ -30,7 +30,8 @@ function notificationPopups(url){
         return;
     }
     running[url] = 1;
-    url = 'http://www.scorespro.com/soccer/livescore/welling-vs-grimsby/28-03-2015/';
+    console.log(url);
+//    url = 'http://www.scorespro.com/soccer/livescore/welling-vs-grimsby/28-03-2015/';
     $.get(url, function(txt) {
         // console.log("Retrieved Page");
         count=0;
@@ -125,10 +126,35 @@ function notificationPopups(url){
 	    }
 	    //	console.log(player);
 	    //	console.log(time);
-	    if (localStorage.getItem("prevscore-"+url) == null || localStorage.getItem("prevscore-"+url) < curscr) {
+	    // cleanup player
+	    flag1 = 0;
+	    var anotp = "";
+	    for (var i = 0; i < player; i++) {
+		    if (player[i] == '<') {
+			    flag++;
+		    }
+		    if (flag == 0) {
+			    anotp = anotp + player[i];
+		    }
+		    if (player[i] == '>') {
+			    flag--;
+		    }
+	    }
+	    player = anotp;
+//	    console.log(curscr);
+//	    console.log(localStorage.getItem("prevscore-"+url));
+	    if (localStorage.getItem("prevscore-"+url) == null) {
+		    localStorage.setItem("prevscore-"+url, curscr, url);
+		    if (curscr != 0) {
+			    var msg = "GOAAALLL!" + player + " score at " + time + "!! Live Score: " + latests;
+			    //		    console.log(msg);
+			    notify(matchtit, msg, url);
+		    }
+	    }
+	    if (localStorage.getItem("prevscore-"+url) < curscr) {
 		    localStorage.removeItem("prevscore-"+url);
 		    localStorage.setItem("prevscore-"+url, curscr, url);
-		    var msg = "GOAAALLL!" + player + " scores at " + time + "!! Live Score: " + latests;
+		    var msg = "GOAAALLL!" + player + " score at " + time + "!! Live Score: " + latests;
 //		    console.log(msg);
 		    notify(matchtit, msg, url);
 	    }
