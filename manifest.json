@@ -1,15 +1,15 @@
 {
     "manifest_version": 2,
 
-    "name": "CricketNotifier",
-    "description": "Desktop notification of fours, sixes and wickets for selected matches",
+    "name": "FootballNotifier",
+    "description": "Desktop notifications of goals for selected matches.",
     "version": "1.0",
 
     "permissions": [
         "tabs", "http://*/*", "https://*/*", "storage", "notifications"
     ],
     "browser_action": {
-        "default_icon" : "cricico.png",
+        "default_icon" : "football.png",
         "default_popup": "popup.html"
     },
     "background": {
