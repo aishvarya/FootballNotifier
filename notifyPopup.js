@@ -12,7 +12,7 @@ function notify(title, msg, url) {
 	    		'message' : msg
 		},
 		function(notifid){
-			console.log("Last error:", chrome.runtime.lastError); 
+			//console.log("Last error:", chrome.runtime.lastError); 
 		}
 	);
 	chrome.notifications.onClicked.addListener(function(notifid) {
@@ -30,7 +30,7 @@ function notificationPopups(url){
         return;
     }
     running[url] = 1;
-    url = 'http://www.scorespro.com/soccer/livescore/fcm-dorohoi-vs-fc-balotesti/28-03-2015/';
+    url = 'http://www.scorespro.com/soccer/livescore/welling-vs-grimsby/28-03-2015/';
     $.get(url, function(txt) {
         // console.log("Retrieved Page");
         count=0;
@@ -42,12 +42,17 @@ function notificationPopups(url){
 	var matchtit = "Match";
 	var latests = "0 - 0";
 	var scorer = "";
+	var scorer2 = "";
+	gameover = 0;
+	matchtit = htmlDoc.getElementsByTagName('title')[0].innerHTML;
+	//console.log(matchtit);
 	for (var i = 0; i < tds.length; i++) { 
 		if (tds[i].className == "score") {
 			scores = tds[i].innerHTML;
 			curscr = scores.length;
 			latests = scores
 		}
+		/*
 		if (tds[i].className == "league") {
 			scores = tds[i].innerHTML;
 			// parse score
@@ -68,47 +73,67 @@ function notificationPopups(url){
 			matchtit = curn
 			// console.log(scores);
 		}
+		*/
 		if (tds[i].className == "home") {
 			scores = tds[i].innerHTML;
 			scorer = scores;
 		}
-	}
-	console.log(matchtit);
-//	console.log(latests);
-//	console.log(scorer);
-	var time = "";
-	flag1 = 0;
-	flag2 = 0;
-	flag3 = 0;
-	var player = "";
-	for (var i = 0; i < scorer.length; i++) {
-		if (flag3 == 1) {
-			player = player + scorer[i];
+		if (tds[i].className == "away") {
+			scores = tds[i].innerHTML;
+			scorer2 = scores;
 		}
-		if (scorer[i] == '<') {
-			flag1 = 1;
-		}
-		if (flag1 == 0) {
-			time = time + scorer[i];
-		}
-		if (scorer[i] == '/') {
-			flag2=1;
-		}
-		if (flag2==1 && scorer[i]=='>') {
-			flag3=1;
+		if (tds[i].className == "synopsis st") {
+			scores = tds[i].innerHTML;
+			// console.log(scores);
+			if (scores.indexOf("Finished")>-1) {
+				gameover = 1;
+			}
 		}
 	}
-//	console.log(player);
-//	console.log(time);
-	localStorage.setItem("prevscore-"+url,0);
-	if (localStorage.getItem("prevscore-"+url) == null || localStorage.getItem("prevscore-"+url) < curscr) {
-		localStorage.removeItem("prevscore-"+url);
-		localStorage.setItem("prevscore-"+url, curscr, url);
-		var msg = "GOAAALLL!" + player + " scores at " + time + "!! Live Score: " + latests;
-		console.log(msg);
-                notify(matchtit, msg, url);
-	}
-	console.log(localStorage.getItem("prevscore-"+url));
+    if (gameover == 0) {
+//	    console.log(matchtit);
+	    //	console.log(latests);
+	    //	console.log(scorer);
+	    for (var i = 0; i < scorer.length; i++) {
+		    if (scorer[i]=='&') {
+			    scorer = scorer2;
+			    break;
+		    }
+	    }
+	    //console.log("scorer - " + scorer);
+	    var time = "";
+	    flag1 = 0;
+	    flag2 = 0;
+	    flag3 = 0;
+	    var player = "";
+	    for (var i = 0; i < scorer.length; i++) {
+		    if (flag3 == 1) {
+			    player = player + scorer[i];
+		    }
+		    if (scorer[i] == '<') {
+			    flag1 = 1;
+		    }
+		    if (flag1 == 0) {
+			    time = time + scorer[i];
+		    }
+		    if (scorer[i] == '/') {
+			    flag2=1;
+		    }
+		    if (flag2==1 && scorer[i]=='>') {
+			    flag3=1;
+		    }
+	    }
+	    //	console.log(player);
+	    //	console.log(time);
+	    if (localStorage.getItem("prevscore-"+url) == null || localStorage.getItem("prevscore-"+url) < curscr) {
+		    localStorage.removeItem("prevscore-"+url);
+		    localStorage.setItem("prevscore-"+url, curscr, url);
+		    var msg = "GOAAALLL!" + player + " scores at " + time + "!! Live Score: " + latests;
+//		    console.log(msg);
+		    notify(matchtit, msg, url);
+	    }
+//	    console.log(localStorage.getItem("prevscore-"+url));
+    }
 	delete running[url];
     });
 }
