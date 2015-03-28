@@ -3,13 +3,13 @@
 
     "name": "CricketNotifier",
     "description": "Desktop notification of fours, sixes and wickets for selected matches",
-    "version": "2.0",
+    "version": "1.0",
 
     "permissions": [
         "tabs", "http://*/*", "https://*/*", "storage", "notifications"
     ],
     "browser_action": {
-        "default_icon" : "football.png",
+        "default_icon" : "cricico.png",
         "default_popup": "popup.html"
     },
     "background": {
@@ -20,6 +20,6 @@
         {
         "matches": ["http://*/*"],
         "js": ["getMatches.js"]
-    	}
+    }
     ]
 }
