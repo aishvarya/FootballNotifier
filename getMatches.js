@@ -56,22 +56,26 @@ function getMatches(){
                      
                     localStorage.removeItem("activeMatches");
                     localStorage.setItem("activeMatches", JSON.stringify(newActiveMatches));
-                    //console.log(newActiveMatches);
-                    var regExp= /\) ((.*?): .*?-.*?) \-/;
+                    regExp = /\) ((.*?): .*?-.*?) \-(.*)/;
                         
                     for(i=0;i<matchList.length;i++){
                         link = matchList[i].getElementsByTagName("link")[0].textContent;
-                        title = matchList[i].getElementsByTagName("description")[0].textContent;
-                        title = regExp.exec(title);
-                        title = title[1];
+                        matchDesc = matchList[i].getElementsByTagName("description")[0].textContent;
+                        matchDesc = regExp.exec(matchDesc);
 
-                        concated += "<h3 value=\"" + i + "\" " + "url=\"" + link + "\"><input class=\"checkbox\" type=\"checkbox\" id=\"" + link + "\"";
+                        // console.log(matchDesc);
+                        title = matchDesc[1];
+                        summary = matchDesc[3];
+
+                        concated += "<h3 value=\"" + i + "\" " + "id=\"" + summary + "\"><input class=\"checkbox\" type=\"checkbox\" id=\"" + link + "\"";
                         if(newActiveMatches.indexOf(link) != -1){
                             concated += " checked";
                         }
                         concated += "><label for=\"" + link  + "\">" +  title + "</label></h3><div id=\"status-" + i +  "\" stillLoading=\"1\">Loading...<br/><br/></div>";
                         //concated +="<a href=\"" + matchList[i].children[1].textContent + "\">" + "blastatus"  + "</a>";
                     }
+
+                    console.log(concated);
                     document.getElementById('accordion').innerHTML= concated;
                     $('#accordion input[type="checkbox"]').click(function(e) {
                         e.stopPropagation();
@@ -83,12 +87,12 @@ function getMatches(){
                             heightStyle: "content",
                             activate: function (e, ui) {
                                 val = $(ui.newHeader[0]).attr("value");
-                                url = $(ui.newHeader[0]).attr("url");
+                                desc = $(ui.newHeader[0]).attr("id");
                                 currentStatus = document.getElementById("status-" + val);
                                 if(currentStatus != null){
                                     console.log(currentStatus.innerHTML);
                                     if($(currentStatus).attr("stillLoading") == "1"){
-                                        setStatusAndTitle(url, currentStatus);
+                                        currentStatus.innerHTML = desc;
                                         $(currentStatus).attr("stillLoading",  "0");
                                     }
                                 }
