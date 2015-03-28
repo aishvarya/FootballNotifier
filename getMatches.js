@@ -5,9 +5,10 @@ function fixurl (origUrl) {
     return theUrl;
 }
 function setStatusAndTitle(origUrl, ele){
-    // console.log("trying to retrieve " + origUrl);
+    console.log("trying to retrieve " + origUrl);
     $.get(origUrl, function(response) {
-        // console.log("retrieved " + origUrl);
+     console.log("retrieved " + origUrl);
+     console.log(response);
         ele.innerHTML = response.live.status;
     });
 };
@@ -37,7 +38,7 @@ function getMatches(){
     chrome.tabs.getAllInWindow(
             function(tab) {
                 xmlhttp=new XMLHttpRequest();
-                $.get("http://static.cricinfo.com/rss/livescores.xml", false, function(response) {
+                $.get("http://www.scorespro.com/rss2/live-soccer.xml", false, function(response) {
                     matchListXML = response;
                     matchList = matchListXML.getElementsByTagName("item");
                     concated="";
@@ -47,19 +48,23 @@ function getMatches(){
                     newActiveMatches = [];
                     matchURLs = [];
                     for(i=0;i<matchList.length;i++)
-                        matchURLs.push(fixurl(matchList[i].getElementsByTagName("link")[0].textContent));
-                    // console.log(matchURLs);
-                    // console.log(activeMatches);
+                        matchURLs.push(matchList[i].getElementsByTagName("link")[0].textContent);
                     for(i=0;i<activeMatches.length;i++){
                         if(matchURLs.indexOf(activeMatches[i]) != -1)
                             newActiveMatches.push(activeMatches[i]);                
                     }
+                     
                     localStorage.removeItem("activeMatches");
                     localStorage.setItem("activeMatches", JSON.stringify(newActiveMatches));
                     //console.log(newActiveMatches);
+                    var regExp= /\) ((.*?): .*?-.*?) \-/;
+                        
                     for(i=0;i<matchList.length;i++){
-                        link = fixurl(matchList[i].getElementsByTagName("link")[0].textContent);
-                        title = matchList[i].getElementsByTagName("title")[0].textContent;
+                        link = matchList[i].getElementsByTagName("link")[0].textContent;
+                        title = matchList[i].getElementsByTagName("description")[0].textContent;
+                        title = regExp.exec(title);
+                        title = title[1];
+
                         concated += "<h3 value=\"" + i + "\" " + "url=\"" + link + "\"><input class=\"checkbox\" type=\"checkbox\" id=\"" + link + "\"";
                         if(newActiveMatches.indexOf(link) != -1){
                             concated += " checked";
@@ -81,7 +86,7 @@ function getMatches(){
                                 url = $(ui.newHeader[0]).attr("url");
                                 currentStatus = document.getElementById("status-" + val);
                                 if(currentStatus != null){
-                                    //console.log(currentStatus.innerHTML);
+                                    console.log(currentStatus.innerHTML);
                                     if($(currentStatus).attr("stillLoading") == "1"){
                                         setStatusAndTitle(url, currentStatus);
                                         $(currentStatus).attr("stillLoading",  "0");
