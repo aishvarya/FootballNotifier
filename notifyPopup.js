@@ -352,13 +352,13 @@ function notificationPopups(url){
 			    	msg = "GOAAALLL!! Live Score:" + latests;
 			    }
 			    else if (time == "") {
-			    	msg = "GOAAALLL! " + player + " scores!! Live Score:" + latests;
+			    	msg = "GOAAALLL!!\n" + player + " scores!\nLive Score:" + latests;
 			    }
 			    else if (player == "") {
-			    	msg = "GOAAALLL! Score at " + time + "!! Live Score:" + latests;
+			    	msg = "GOAAALLL!!\nScore at " + time + "!\nLive Score:" + latests;
 			    }
 			    else {
-			    	msg = "GOAAALLL! " + player + " scores at " + time + "!! Live Score:" + latests;
+			    	msg = "GOAAALLL!!\n" + player + " scores at " + time + "!\nLive Score:" + latests;
 			    }
 			    //		    console.log(msg);
 			    notify(matchtit, msg, url);
