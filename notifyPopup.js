@@ -48,12 +48,44 @@ function notificationPopups(url){
 	matchtit = htmlDoc.getElementsByTagName('title')[0].innerHTML;
 	//console.log(matchtit);
 	tmpsc = "";
+	yellowh = ""; yellowa = "";
+	redh = ""; reda = "";
 	for (var i = 0; i < tds.length; i++) { 
 		brflag = 0;
 		if (tds[i].className == "home") {
 			scores = tds[i].innerHTML;
 			tmpsc = scores;
 			//console.log(tmpsc);
+			if (scores.indexOf("yellowcard")>-1) {
+				yellowh = "";
+				curf = 0;
+				for (var j = 0; j < scores.length; j++) {
+					if (scores[j]=='<') {
+						curf++;
+					}
+					if (curf == 0) {
+						yellowh = yellowh + scores[j];
+					}
+					if (scores[j]=='>') {
+						curf--;
+					}
+				}
+			}
+			if (scores.indexOf("redcard")>-1) {
+				redh = "";
+				curf = 0;
+				for (var j = 0; j < scores.length; j++) {
+					if (scores[j]=='<') {
+						curf++;
+					}
+					if (curf == 0) {
+						redh = redh + scores[j];
+					}
+					if (scores[j]=='>') {
+						curf--;
+					}
+				}
+			}
 		}
 		if (tds[i].className == "score") {
 			scores = tds[i].innerHTML;
@@ -64,7 +96,7 @@ function notificationPopups(url){
 					break;
 				}
 			}
-			console.log(pros);
+			// console.log(pros);
 			if (brflag == 1) {
 				latests = scores;
 				curscr = scores.length;
@@ -73,33 +105,41 @@ function notificationPopups(url){
 		if (brflag == 1) {
 			scorer = tmpsc;
 		}
-		/*
-		if (tds[i].className == "league") {
-			scores = tds[i].innerHTML;
-			// parse score
-			var curn = "";
-	    		flag = 0;
-    			flag2 = 0;
-			for (var j = 0; j < scores.length; j++) {
-				if (flag2 == 1) {
-					curn = curn + scores[j];
-				}
-				if (scores[j] == '/') {
-					flag = 1;
-				}
-				if (flag == 1 && scores[j]=='>') {
-					flag2 = 1;
-				}
-			}
-			matchtit = curn
-			// console.log(scores);
-		}
-		*/
 		
 		if (tds[i].className == "away" && brflag == 0) {
-			console.log("here");
+			// console.log("here");
 			scores = tds[i].innerHTML;
 			scorer2 = scores;
+			if (scores.indexOf("yellowcard")>-1) {
+				yellowa = "";
+				curf = 0;
+				for (var j = 0; j < scores.length; j++) {
+					if (scores[j]=='<') {
+						curf++;
+					}
+					if (curf == 0) {
+						yellowa = yellowa + scores[j];
+					}
+					if (scores[j]=='>') {
+						curf--;
+					}
+				}
+			}
+			if (scores.indexOf("redcard")>-1) {
+				reda = "";
+				curf = 0;
+				for (var j = 0; j < scores.length; j++) {
+					if (scores[j]=='<') {
+						curf++;
+					}
+					if (curf == 0) {
+						reda = reda + scores[j];
+					}
+					if (scores[j]=='>') {
+						curf--;
+					}
+				}
+			}
 		}
 		if (tds[i].className == "synopsis st") {
 			scores = tds[i].innerHTML;
@@ -170,7 +210,46 @@ function notificationPopups(url){
 		    }
 	    }
 	    player = anotp;
-//	    console.log(curscr);
+	    // cleanup time
+	    flag1 = 0;
+	    anotp = "";
+	    for (var i = 0; i< time.length;i++ ){
+		    if (time[i]=='<') {
+			    flag1++;
+		    }
+		    if (flag1==0) {
+			    anotp = anotp+time[i];
+		    }
+		    if (time[i]=='>') {
+			    flag1--;
+		    }
+	    }
+	    time = anotp;
+	    if (localStorage.getItem("yellowh-"+url) != yellowh && yellowh != "") {
+		    localStorage.removeItem("yellowh-"+url);
+		    localStorage.setItem("yellowh-"+url, yellowh, url);
+		    var msg = "YELLOW CARD!! " + yellowh;
+		    notify(matchtit, msg, url + "yellowh");
+	    }
+	    if (localStorage.getItem("yellowa-"+url) != yellowa && yellowa != "") {
+		    localStorage.removeItem("yellowa-"+url);
+		    localStorage.setItem("yellowa-"+url, yellowa, url);
+		    var msg = "YELLOW CARD!! " + yellowa;
+		    notify(matchtit, msg, url + "yellowa");
+	    }
+	    if (localStorage.getItem("redh-"+url) != redh && redh != "") {
+		    localStorage.removeItem("redh-"+url);
+		    localStorage.setItem("redh-"+url, redh, url);
+		    var msg = "RED CARD FOR HOME TEAM!! " + redh;
+		    notify(matchtit, msg, url + "redh");
+	    }
+	    if (localStorage.getItem("reda-"+url) != reda && reda != "") {
+		    localStorage.removeItem("reda-"+url);
+		    localStorage.setItem("reda-"+url, reda, url);
+		    var msg = "RED CARD!! " + reda;
+		    notify(matchtit, msg, url + "reda");
+	    }
+	    //	    console.log(curscr);
 //	    console.log(localStorage.getItem("prevscore-"+url));
 	    if (localStorage.getItem("prevscore-"+url) == null) {
 		    localStorage.setItem("prevscore-"+url, curscr, url);
