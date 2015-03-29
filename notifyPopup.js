@@ -2,6 +2,51 @@ function audioNotification(){
     var yourSound = new Audio('POP.WAV');
     yourSound.play();
 }
+
+function notifyyellow(title, msg, url) {
+	var notif = chrome.notifications.create(
+		url,
+		{   
+			'type': 'basic',
+	    		'iconUrl' : 'yellowcard.jpg',
+	    		'title' : title,
+	    		'message' : msg
+		},
+		function(notifid){
+			//console.log("Last error:", chrome.runtime.lastError); 
+		}
+	);
+	chrome.notifications.onClicked.addListener(function(notifid) {
+		//window.open(url.replace("json", "html"), "_blank");
+		chrome.notifications.clear(notifid, function(cleared){});
+	});
+	setTimeout(function(){
+		chrome.notifications.clear(url, function(cleared){});
+	}, 10000);
+}
+
+function notifyred(title, msg, url) {
+	var notif = chrome.notifications.create(
+		url,
+		{   
+			'type': 'basic',
+	    		'iconUrl' : 'redcard.jpg',
+	    		'title' : title,
+	    		'message' : msg
+		},
+		function(notifid){
+			//console.log("Last error:", chrome.runtime.lastError); 
+		}
+	);
+	chrome.notifications.onClicked.addListener(function(notifid) {
+		//window.open(url.replace("json", "html"), "_blank");
+		chrome.notifications.clear(notifid, function(cleared){});
+	});
+	setTimeout(function(){
+		chrome.notifications.clear(url, function(cleared){});
+	}, 10000);
+}
+
 function notify(title, msg, url) {
 	var notif = chrome.notifications.create(
 		url,
@@ -229,28 +274,28 @@ function notificationPopups(url){
 		    localStorage.removeItem("yellowh-"+url);
 		    localStorage.setItem("yellowh-"+url, yellowh, url);
 		    var msg = "YELLOW CARD!! " + yellowh;
-		    notify(matchtit, msg, url + "yellowh");
+		    notifyyellow(matchtit, msg, url + "yellowh");
 		    audioNotification();
 	    }
 	    if (localStorage.getItem("yellowa-"+url) != yellowa && yellowa != "") {
 		    localStorage.removeItem("yellowa-"+url);
 		    localStorage.setItem("yellowa-"+url, yellowa, url);
 		    var msg = "YELLOW CARD!! " + yellowa;
-		    notify(matchtit, msg, url + "yellowa");
+		    notifyyellow(matchtit, msg, url + "yellowa");
 		    audioNotification();
 	    }
 	    if (localStorage.getItem("redh-"+url) != redh && redh != "") {
 		    localStorage.removeItem("redh-"+url);
 		    localStorage.setItem("redh-"+url, redh, url);
 		    var msg = "RED CARD FOR HOME TEAM!! " + redh;
-		    notify(matchtit, msg, url + "redh");
+		    notifyred(matchtit, msg, url + "redh");
 		    audioNotification();
 	    }
 	    if (localStorage.getItem("reda-"+url) != reda && reda != "") {
 		    localStorage.removeItem("reda-"+url);
 		    localStorage.setItem("reda-"+url, reda, url);
 		    var msg = "RED CARD!! " + reda;
-		    notify(matchtit, msg, url + "reda");
+		    notifyred(matchtit, msg, url + "reda");
 		    audioNotification();
 	    }
 	    //	    console.log(curscr);
