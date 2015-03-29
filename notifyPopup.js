@@ -255,6 +255,50 @@ function notificationPopups(url){
 	    }
 	    //	    console.log(curscr);
 //	    console.log(localStorage.getItem("prevscore-"+url));
+	    var rmpl = "";
+	    flagrm = 0;
+	    for (var i = 0; i<player.length; i++) {
+		    if (player[i]!=' ') {
+			    flagrm =1;
+		    }
+		    if (flagrm == 1) {
+			    rmpl = rmpl + player[i];
+		    }
+	    }
+	    flagrm = 0;
+	    player = rmpl;
+	    rmpl = "";
+	    for (var i = player.length-1; i>=0 ; i--) {
+		    if (player[i]!=' ') {
+			    flagrm = 1;
+		    }
+		    if (flagrm == 1) {
+			    rmpl = player[i] + rmpl;
+		    }
+	    }
+	    flagrm = 0;
+	    player = rmpl;
+	    rmpl = "";
+	    for (var i = 0; i<time.length; i++) {
+		    if (time[i]!=' ') {
+			    flagrm =1;
+		    }
+		    if (flagrm == 1) {
+			    rmpl = rmpl + time[i];
+		    }
+	    }
+	    flagrm = 0;
+	    time = rmpl;
+	    rmpl = "";
+	    for (var i = time.length-1; i>=0 ; i--) {
+		    if (time[i]!=' ') {
+			    flagrm = 1;
+		    }
+		    if (flagrm == 1) {
+			    rmpl = time[i] + rmpl;
+		    }
+	    }
+	    time = rmpl;
 	    if (localStorage.getItem("prevscore-"+url) == null) {
 		    localStorage.setItem("prevscore-"+url, curscr, url);
 		    if (curscr != 0) {
