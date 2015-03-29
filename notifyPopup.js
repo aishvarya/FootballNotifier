@@ -302,7 +302,19 @@ function notificationPopups(url){
 	    if (localStorage.getItem("prevscore-"+url) == null) {
 		    localStorage.setItem("prevscore-"+url, curscr, url);
 		    if (curscr != 0) {
-			    var msg = "GOAAALLL!" + player + " score " + time + "!! Live Score: " + latests;
+			    var msg = "";
+			    if (time == "" && player == "") {
+			    	msg = "GOAAALLL!! Live Score:" + latests;
+			    }
+			    else if (time == "") {
+			    	msg = "GOAAALLL! " + player + " scores!! Live Score:" + latests;
+			    }
+			    else if (player == "") {
+			    	msg = "GOAAALLL! Score at " + time + "!! Live Score:" + latests;
+			    }
+			    else {
+			    	msg = "GOAAALLL! " + player + " scores at " + time + "!! Live Score:" + latests;
+			    }
 			    //		    console.log(msg);
 			    notify(matchtit, msg, url);
 			    audioNotification();
